@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF--8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Google Bird</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Google Sans', sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Custom styles to match Google's brand feel */
+        .g-blue { background-color: #4285F4; }
+        .g-red { background-color: #DB4437; }
+        .g-yellow { background-color: #F4B400; }
+        .g-green { background-color: #0F9D58; }
+
+        .text-g-blue { color: #4285F4; }
+        .text-g-red { color: #DB4437; }
+        .text-g-yellow { color: #F4B400; }
+        .text-g-green { color: #0F9D58; }
+        
+        .parent {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: 1fr;
+            gap: 16px;
+            height: 100vh;
+            padding: 16px;
+            background-color: #f8f9fa; /* Google's light grey background */
+        }
+            
+        .div1 {
+            grid-column: span 4 / span 4;
+            grid-row: 1;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .div2 {
+            grid-column-start: 5;
+            grid-row: 1;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            background-color: white;
+            padding: 24px;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* For Firefox scrollbar styling */
+        .scrollbar-thin {
+          scrollbar-width: thin;
+          scrollbar-color: #4285F4 #e0e0e0;
+        }
+
+        /* For Webkit (Chrome, Safari) scrollbar styling */
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #4285F4;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="parent">
+        <!-- Game Screen -->
+        <div class="div1 bg-white">
+            <!-- Start Screen -->
+            <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center z-10 p-8 text-center bg-white">
+                 <div class="flex items-center space-x-2 mb-4">
+                    <span class="w-8 h-8 rounded-full g-blue"></span>
+                    <span class="w-8 h-8 rounded-full g-red"></span>
+                    <span class="w-8 h-8 rounded-full g-yellow"></span>
+                    <span class="w-8 h-8 rounded-full g-green"></span>
+                </div>
+                <h1 class="text-5xl font-bold text-gray-700 mb-4">Flappy Google Bird</h1>
+                <p class="text-gray-500 mb-8 max-w-md">A fun little game for Googlers. Please enter your LDAP to begin and tap the screen or press spacebar to fly.</p>
+                <div class="w-full max-w-xs">
+                    <input type="text" id="ldap-input" placeholder="Enter your LDAP" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                    <button id="start-button" disabled class="w-full mt-4 g-blue text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-300">
+                        Start Game
+                    </button>
+                </div>
+            </div>
+            <!-- Game Canvas -->
+            <canvas id="game-canvas" class="hidden"></canvas>
+        </div>
+
+        <!-- High Score Panel -->
+        <div class="div2 flex flex-col">
+            <h2 class="text-2xl font-bold text-gray-800 border-b pb-3 mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-g-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                High Scores
+            </h2>
+            <ul id="high-score-list" class="space-y-3 overflow-y-auto flex-grow scrollbar-thin pr-2">
+                <!-- High scores will be loaded here dynamically -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbz0iKZO3ilwAxC3XqLzj4aKPJVfoC8I6gHa6MvD6zZIPxJvQC9U9pDcR1X2dXR3Rl/exec';
+
+        // --- UI ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const ldapInput = document.getElementById('ldap-input');
+        const startButton = document.getElementById('start-button');
+        const gameCanvas = document.getElementById('game-canvas');
+        const highScoreList = document.getElementById('high-score-list');
+        const ctx = gameCanvas.getContext('2d');
+
+        // --- GAME STATE ---
+        let gameActive = false;
+        let gameOver = false;
+        let score = 0;
+        let frame = 0;
+        let ldap = '';
+
+        // --- GAME CONSTANTS ---
+        const BIRD_RADIUS = 20;
+        const GRAVITY = 0.5;
+        const LIFT = -8;
+        const PIPE_WIDTH = 80;
+        const PIPE_SPACING = 350;
+        const MIN_PIPE_HEIGHT = 75;
+        const GOOGLE_COLORS = ['#0F9D58', '#DB4437', '#F4B400'];
+        
+        // --- DIFFICULTY VARIABLES ---
+        let pipeSpeed = 1.8; 
+        let pipeGap = 240;
+        
+        // --- GAME OBJECTS ---
+        let bird = { x: 150, y: 150, velocity: 0 };
+        let pipes = [];
+
+        // --- HIGH SCORE LOGIC ---
+
+        async function fetchHighScores() {
+            highScoreList.innerHTML = '<li class="text-center text-gray-500 p-4">Loading scores...</li>';
+            try {
+                const response = await fetch(SCRIPT_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    updateHighScoreUI(result.data);
+                } else {
+                    highScoreList.innerHTML = `<li class="text-center text-red-500 p-4">Error: ${result.error || 'Failed to load scores.'}</li>`;
+                }
+            } catch (error) {
+                console.error('Error fetching high scores:', error);
+                highScoreList.innerHTML = '<li class="text-center text-red-500 p-4">Could not connect to the server.</li>';
+            }
+        }
+
+        function updateHighScoreUI(scores) {
+            highScoreList.innerHTML = ''; // Clear previous list
+            if (scores.length === 0) {
+                highScoreList.innerHTML = '<li class="text-center text-gray-500 p-4">No scores yet. Be the first!</li>';
+                return;
+            }
+
+            const rankColors = ['text-g-blue', 'text-g-red', 'text-g-green'];
+            const ringColors = ['ring-blue-200', 'ring-red-200', 'ring-green-200'];
+            const avatarColors = ['4285F4', 'DB4437', '0F9D58'];
+
+            scores.forEach((item, index) => {
+                const rank = index + 1;
+                const rankColor = rank <= 3 ? rankColors[index] : 'text-gray-500';
+                const ringColor = rank <= 3 ? ringColors[index] : 'ring-gray-200';
+                const avatarColor = rank <= 3 ? avatarColors[index] : '757575';
+                const firstLetter = (item.ldap || ' ').charAt(0).toUpperCase();
+
+                const listItem = `
+                    <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
+                        <div class="flex items-center min-w-0">
+                            <span class="font-bold ${rankColor} w-8 flex-shrink-0">${rank}.</span>
+                            <img src="https://placehold.co/40x40/${avatarColor}/FFFFFF?text=${firstLetter}" alt="avatar" class="rounded-full w-10 h-10 mr-3 border-2 border-white ring-2 ${ringColor} flex-shrink-0">
+                            <span class="font-medium text-gray-700 truncate">${item.ldap}</span>
+                        </div>
+                        <span class="font-bold text-lg ${rankColor} ml-4 flex-shrink-0">${item.score}</span>
+                    </li>`;
+                highScoreList.innerHTML += listItem;
+            });
+        }
+        
+        async function saveScore(playerLdap, playerScore) {
+            // Only save scores greater than 0
+            if (playerScore <= 0) {
+                await fetchHighScores();
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    // Removed mode: 'no-cors' to allow reading the response
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8', // Required for this type of Apps Script POST
+                    },
+                    body: JSON.stringify({ ldap: playerLdap, score: playerScore }),
+                });
+                // Since Apps Script redirects, we can't easily read the response,
+                // but completing the request is enough. We'll fetch scores after.
+            } catch (error) {
+                console.error('Error saving score:', error);
+            } finally {
+                 // Add a small delay before fetching scores to give the spreadsheet time to update
+                setTimeout(() => {
+                    fetchHighScores();
+                }, 1500); // Increased delay slightly for reliability
+            }
+        }
+
+
+        // --- UI & GAME START ---
+
+        ldapInput.addEventListener('input', () => {
+            startButton.disabled = ldapInput.value.trim() === '';
+        });
+
+        startButton.addEventListener('click', () => {
+            ldap = ldapInput.value.trim();
+            if (ldap) startGame();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchHighScores();
+        });
+
+        function startGame() {
+            startScreen.classList.add('hidden');
+            gameCanvas.classList.remove('hidden');
+            
+            const container = gameCanvas.parentElement;
+            gameCanvas.width = container.clientWidth;
+            gameCanvas.height = container.clientHeight;
+            
+            gameActive = false;
+            gameOver = false;
+            score = 0;
+            frame = 0;
+            pipeSpeed = 1.8;
+            pipeGap = 240;
+            bird = { x: 150, y: gameCanvas.height / 2, velocity: 0 };
+            pipes = [];
+            
+            addPipe();
+            drawStaticFrame();
+            runCountdown(3);
+        }
+
+        function drawStaticFrame() {
+            ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+            drawPipes();
+            drawBird();
+            drawScore();
+        }
+
+        function runCountdown(count) {
+            if (count < 0) {
+                gameActive = true;
+                gameLoop();
+                return;
+            }
+
+            drawStaticFrame();
+            const text = count === 0 ? "GO!" : count;
+            ctx.fillStyle = 'rgba(32, 33, 36, 0.8)';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 100px "Google Sans"';
+            ctx.fillText(text, gameCanvas.width / 2, gameCanvas.height / 2);
+
+            setTimeout(() => runCountdown(count - 1), 1000);
+        }
+
+        // --- GAME CONTROLS ---
+        function flap() {
+            if (gameActive && !gameOver) bird.velocity = LIFT;
+        }
+        document.addEventListener('keydown', (e) => { if (e.code === 'Space' && gameActive) flap(); });
+        gameCanvas.addEventListener('click', () => { if (gameActive) flap(); });
+
+        // --- GAME LOGIC ---
+
+        function addPipe() {
+            const topHeight = Math.random() * (gameCanvas.height - pipeGap - (MIN_PIPE_HEIGHT * 2)) + MIN_PIPE_HEIGHT;
+            const color = GOOGLE_COLORS[Math.floor(Math.random() * GOOGLE_COLORS.length)];
+            pipes.push({ x: gameCanvas.width, topHeight: topHeight, color: color, passed: false });
+        }
+        
+        function updatePipes() {
+            if (frame % Math.floor(PIPE_SPACING / pipeSpeed) === 0) addPipe();
+            
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].x -= pipeSpeed;
+                
+                if (pipes[i].x + PIPE_WIDTH < bird.x && !pipes[i].passed) {
+                    score++;
+                    if (score > 0 && score % 5 === 0) {
+                        pipeSpeed += 0.15;
+                        if (pipeGap > 180) pipeGap -= 8;
+                    }
+                    pipes[i].passed = true;
+                }
+
+                if (pipes[i].x + PIPE_WIDTH < 0) pipes.splice(i, 1);
+            }
+        }
+        
+        function updateBird() {
+            bird.velocity += GRAVITY;
+            bird.y += bird.velocity;
+            if (bird.y - BIRD_RADIUS < 0) {
+                bird.y = BIRD_RADIUS;
+                bird.velocity = 0;
+            }
+        }
+
+        function checkCollisions() {
+            if (bird.y + BIRD_RADIUS > gameCanvas.height) return true;
+            for (let pipe of pipes) {
+                if (bird.x + BIRD_RADIUS > pipe.x && bird.x - BIRD_RADIUS < pipe.x + PIPE_WIDTH) {
+                    if (bird.y - BIRD_RADIUS < pipe.topHeight || bird.y + BIRD_RADIUS > pipe.topHeight + pipeGap) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // --- DRAWING FUNCTIONS ---
+
+        function drawPipes() {
+            pipes.forEach(pipe => {
+                ctx.fillStyle = pipe.color;
+                ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.topHeight);
+                ctx.fillRect(pipe.x, pipe.topHeight + pipeGap, PIPE_WIDTH, gameCanvas.height - pipe.topHeight - pipeGap);
+            });
+        }
+        
+        function drawBird() {
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, BIRD_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = '#4285F4';
+            ctx.fill();
+            ctx.closePath();
+        }
+        
+        function drawScore() {
+            ctx.fillStyle = '#202124';
+            ctx.font = 'bold 40px "Google Sans"';
+            ctx.textAlign = 'left';
+            ctx.fillText(score, 30, 50);
+        }
+        
+        function drawGameOver() {
+            gameActive = false;
+            saveScore(ldap, score);
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 60px "Google Sans"';
+            ctx.fillText('Game Over', gameCanvas.width / 2, gameCanvas.height / 2 - 50);
+            ctx.font = '30px "Google Sans"';
+            ctx.fillText(`Score: ${score}`, gameCanvas.width / 2, gameCanvas.height / 2 + 10);
+            ctx.font = '20px "Google Sans"';
+            ctx.fillText('Click or Press Space to Restart', gameCanvas.width / 2, gameCanvas.height / 2 + 60);
+
+            const restartHandler = (e) => {
+                if (e.type === 'click' || (e.type === 'keydown' && e.code === 'Space')) {
+                    document.removeEventListener('keydown', restartHandler);
+                    gameCanvas.removeEventListener('click', restartHandler);
+                    startGame();
+                }
+            };
+            
+            setTimeout(() => {
+                document.addEventListener('keydown', restartHandler);
+                gameCanvas.addEventListener('click', restartHandler);
+            }, 500);
+        }
+
+        // --- MAIN GAME LOOP ---
+        function gameLoop() {
+            if (gameOver) {
+                drawGameOver();
+                return;
+            }
+            
+            ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+            updateBird();
+            updatePipes();
+            drawBird();
+            drawPipes();
+            drawScore();
+
+            if (checkCollisions()) gameOver = true;
+            
+            frame++;
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('resize', () => {
+            if (gameActive && !gameOver) {
+                 const container = gameCanvas.parentElement;
+                 gameCanvas.width = container.clientWidth;
+                 gameCanvas.height = container.clientHeight;
+            }
+        });
+    </script>
+
+</body>
+</html>
