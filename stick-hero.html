@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stick Hero - Google Theme</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --google-blue: #4285F4;
+            --google-red: #DB4437;
+            --google-yellow: #F4B400;
+            --google-green: #0F9D58;
+            --google-grey: #f1f3f4;
+            --google-text: #202124;
+            --google-text-light: #5f6368;
+            --google-border: #dadce0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Google Sans', 'Roboto', sans-serif;
+            background-color: var(--google-grey);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-wrapper {
+            width: 90%;
+            max-width: 1280px;
+            height: 90vh;
+            max-height: 720px;
+            display: flex;
+            flex-direction: row;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .content-container {
+            flex: 2.5;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* --- Start Screen --- */
+        #start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-dots {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .logo-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        #start-screen h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            color: var(--google-text);
+            margin: 0 0 16px 0;
+        }
+
+        #start-screen p {
+            font-size: 1.2em;
+            color: var(--google-text-light);
+            max-width: 450px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        #ldap-input {
+            padding: 14px 20px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 1px solid var(--google-border);
+            width: 300px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        #start-game-button {
+            padding: 14px 28px;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: white;
+            background-color: var(--google-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #start-game-button:hover {
+            background-color: #3367D6;
+        }
+
+        /* Input shake animation */
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+
+        /* --- Game Screen --- */
+        .game-container {
+            display: none; /* Initially hidden */
+            width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .high-scores-container {
+            flex: 1;
+            min-width: 340px;
+            max-width: 380px;
+            border-left: 1px solid var(--google-border);
+            padding: 24px;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+        }
+        
+        .high-scores-container h2 {
+            margin: 0 0 24px 0;
+            color: var(--google-text);
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+        }
+        
+        .high-scores-container h2 svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            fill: var(--google-yellow);
+        }
+
+        .score-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .score-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 1em;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s ease-in-out;
+        }
+        
+        .score-item:hover {
+            background-color: #e8f0fe;
+        }
+        
+        .score-rank {
+            color: var(--google-text-light);
+            width: 30px;
+        }
+
+        .score-initial {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 12px;
+        }
+        
+        .score-name {
+            font-weight: 500;
+            color: var(--google-text);
+            flex-grow: 1;
+        }
+        
+        .score-value {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--google-red);
+        }
+
+        #game {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #score, #introduction, #perfect, #restart {
+            position: absolute;
+            z-index: 10;
+        }
+
+        #score {
+            top: 30px;
+            right: 30px;
+            font-size: 2.5em;
+            font-weight: 900;
+            color: var(--google-text);
+        }
+
+        #introduction {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--google-text-light);
+            text-align: center;
+            transition: opacity 1s;
+        }
+
+        #restart {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            color: white;
+            background-color: var(--google-blue);
+            border: none;
+            font-weight: 700;
+            font-size: 1.3em;
+            display: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        
+        #restart:hover {
+            background-color: #3367D6;
+        }
+
+        #perfect {
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--google-green);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="content-container">
+            <div id="start-screen">
+                <div class="logo-dots">
+                    <div class="logo-dot" style="background-color: var(--google-blue);"></div>
+                    <div class="logo-dot" style="background-color: var(--google-red);"></div>
+                    <div class="logo-dot" style="background-color: var(--google-yellow);"></div>
+                    <div class="logo-dot" style="background-color: var(--google-green);"></div>
+                </div>
+                <h1>Stick Hero</h1>
+                <p>A fun little game for Googlers. Please enter your LDAP to begin and hold down to build a bridge.</p>
+                <input type="text" id="ldap-input" placeholder="Enter your LDAP">
+                <button id="start-game-button">Start Game</button>
+            </div>
+            <div class="game-container">
+                <div id="score">0</div>
+                <canvas id="game"></canvas>
+                <div id="introduction">Hold down to build a bridge</div>
+                <div id="perfect">PERFECT!</div>
+                <button id="restart">RESTART</button>
+            </div>
+        </div>
+        <div class="high-scores-container">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                High Scores
+            </h2>
+            <ul class="score-list">
+                <!-- Scores will be dynamically inserted here -->
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // URL for the Google Apps Script Web App
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCrkv4uZCujYb86wcSBfnYvAYzKlfVoM48Pqi8iVgZ3HCXfljI9NBrlNeorBGl8C29/exec';
+
+        // Extend the base functionality of JavaScript
+        Array.prototype.last = function () {
+            return this[this.length - 1];
+        };
+
+        // --- Game data ---
+        let phase = "waiting";
+        let lastTimestamp; 
+        let heroX; 
+        let heroY; 
+        let sceneOffset;
+        let platforms = [];
+        let sticks = [];
+        let score = 0;
+        let scorePosted = false;
+        
+        const googleColors = ['#4285F4', '#DB4437', '#F4B400', '#0F9D58']; 
+
+        // --- Configuration ---
+        const canvasWidth = 375;
+        const canvasHeight = 375;
+        const platformHeight = 100;
+        const heroDistanceFromEdge = 10;
+        const paddingX = 100;
+        const perfectAreaSize = 10;
+        const stretchingSpeed = 3; 
+        const turningSpeed = 3; 
+        const walkingSpeed = 4;
+        const transitioningSpeed = 2;
+        const fallingSpeed = 2;
+        const heroWidth = 20; 
+        const heroHeight = 30;
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const ldapInput = document.getElementById('ldap-input');
+        const startGameButton = document.getElementById('start-game-button');
+        const gameContainer = document.querySelector('.game-container');
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        const introductionElement = document.getElementById("introduction");
+        const perfectElement = document.getElementById("perfect");
+        const restartButton = document.getElementById("restart");
+        const scoreElement = document.getElementById("score");
+        const scoreList = document.querySelector('.score-list');
+        
+        let playerLdap = '';
+
+        // --- High Score Functions ---
+        
+        function fetchHighScores() {
+            scoreList.innerHTML = '<li>Loading...</li>';
+            fetch(SCRIPT_URL + '?action=getScores', { method: 'GET', redirect: 'follow' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text);
+                        updateHighScoreUI(data);
+                    } catch (e) {
+                        console.error("Failed to parse JSON. Response:", text);
+                        scoreList.innerHTML = '<li>Error parsing scores.</li>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching high scores:', error);
+                    scoreList.innerHTML = '<li>Could not load scores. Check Apps Script deployment settings.</li>';
+                });
+        }
+
+        function updateHighScoreUI(scores) {
+            scoreList.innerHTML = ''; 
+            if (!scores || scores.length === 0) {
+                 scoreList.innerHTML = '<li>No scores yet. Be the first!</li>';
+                 return;
+            }
+
+            scores.forEach((scoreEntry, index) => {
+                const li = document.createElement('li');
+                li.className = 'score-item';
+                
+                const initial = scoreEntry.ldap ? scoreEntry.ldap.charAt(0).toUpperCase() : '?';
+                const color = googleColors[index % googleColors.length];
+
+                li.innerHTML = `
+                    <span class="score-rank">${index + 1}.</span>
+                    <div class="score-initial" style="background-color: ${color};">${initial}</div>
+                    <span class="score-name">${scoreEntry.ldap}</span>
+                    <span class="score-value">${scoreEntry.score}</span>
+                `;
+                scoreList.appendChild(li);
+            });
+        }
+
+        function postScore(ldap, score) {
+            fetch(SCRIPT_URL + '?action=postScore', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ldap, score }),
+            })
+            .then(() => {
+                setTimeout(fetchHighScores, 1000); // Increased delay
+            })
+            .catch(error => console.error('Error posting score:', error));
+        }
+
+
+        // --- Game Functions ---
+        function startGame() {
+            playerLdap = ldapInput.value.trim();
+            if (playerLdap) {
+                startScreen.style.display = 'none';
+                gameContainer.style.display = 'block';
+                resetGame();
+            } else {
+                ldapInput.classList.add('shake');
+                setTimeout(() => {
+                    ldapInput.classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        function resetGame() {
+            phase = "waiting";
+            lastTimestamp = undefined;
+            sceneOffset = 0;
+            score = 0;
+            scorePosted = false;
+
+            introductionElement.style.opacity = 1;
+            perfectElement.style.opacity = 0;
+            restartButton.style.display = "none";
+            scoreElement.innerText = score;
+
+            platforms = [{ x: 50, w: 50, color: '#DB4437' }];
+            generatePlatform();
+            generatePlatform();
+            generatePlatform();
+            generatePlatform();
+
+            sticks = [{ x: platforms[0].x + platforms[0].w, length: 0, rotation: 0 }];
+            heroX = platforms[0].x + platforms[0].w - heroDistanceFromEdge;
+            heroY = 0;
+
+            setCanvasSize();
+            draw();
+        }
+
+        function setCanvasSize() {
+            const containerRect = gameContainer.getBoundingClientRect();
+            canvas.width = containerRect.width;
+            canvas.height = containerRect.height;
+        }
+
+        function generatePlatform() {
+            const minimumGap = 40;
+            const maximumGap = 200;
+            const minimumWidth = 25;
+            const maximumWidth = 120;
+
+            const lastPlatform = platforms.last();
+            let furthestX = lastPlatform.x + lastPlatform.w;
+
+            const x = furthestX + minimumGap + Math.floor(Math.random() * (maximumGap - minimumGap));
+            const w = minimumWidth + Math.floor(Math.random() * (maximumWidth - minimumWidth));
+            const color = googleColors[Math.floor(Math.random() * googleColors.length)];
+
+            platforms.push({ x, w, color });
+        }
+
+        // --- Event Listeners ---
+        startGameButton.addEventListener('click', startGame);
+
+        gameContainer.addEventListener("mousedown", function (event) {
+            if (phase === "waiting") {
+                lastTimestamp = undefined;
+                introductionElement.style.opacity = 0;
+                phase = "stretching";
+                window.requestAnimationFrame(animate);
+            }
+        });
+
+        gameContainer.addEventListener("mouseup", function (event) {
+            if (phase === "stretching") {
+                phase = "turning";
+            }
+        });
+
+        window.addEventListener("resize", function (event) {
+            if(gameContainer.style.display === 'block') {
+                setCanvasSize();
+                draw();
+            }
+        });
+
+        restartButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            resetGame();
+        });
+        
+        // Fetch scores on initial load
+        document.addEventListener('DOMContentLoaded', fetchHighScores);
+
+
+        // --- Main Game Loop ---
+        function animate(timestamp) {
+            if (!lastTimestamp) {
+                lastTimestamp = timestamp;
+                window.requestAnimationFrame(animate);
+                return;
+            }
+
+            const deltaTime = timestamp - lastTimestamp;
+
+            switch (phase) {
+                case "waiting":
+                    return; 
+                case "stretching": {
+                    sticks.last().length += deltaTime / stretchingSpeed;
+                    break;
+                }
+                case "turning": {
+                    sticks.last().rotation += deltaTime / turningSpeed;
+                    if (sticks.last().rotation > 90) {
+                        sticks.last().rotation = 90;
+                        const [nextPlatform, perfectHit] = thePlatformTheStickHits();
+                        
+                        if (nextPlatform) {
+                            score += perfectHit ? 2 : 1;
+                            scoreElement.innerText = score;
+                            if (perfectHit) {
+                                perfectElement.style.opacity = 1;
+                                perfectElement.style.transform = 'translate(-50%, -50%) scale(1)';
+                                setTimeout(() => { 
+                                    perfectElement.style.opacity = 0;
+                                    perfectElement.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                                }, 1000);
+                            }
+                            generatePlatform();
+                            phase = "walking";
+                        } else {
+                            phase = "falling";
+                        }
+                    }
+                    break;
+                }
+                case "walking": {
+                    heroX += deltaTime / walkingSpeed;
+                    const [nextPlatform] = thePlatformTheStickHits();
+                    if (nextPlatform) {
+                        const maxHeroX = nextPlatform.x + nextPlatform.w - heroDistanceFromEdge;
+                        if (heroX > maxHeroX) {
+                            heroX = maxHeroX;
+                            phase = "transitioning";
+                        }
+                    } else {
+                        // This case should not be hit if logic is correct, but as a fallback:
+                        const maxHeroX = sticks.last().x + sticks.last().length;
+                        if (heroX > maxHeroX) {
+                            heroX = maxHeroX;
+                            phase = "falling";
+                        }
+                    }
+                    break;
+                }
+                case "transitioning": {
+                    sceneOffset += deltaTime / transitioningSpeed;
+                    const [nextPlatform] = thePlatformTheStickHits();
+                    if (sceneOffset > nextPlatform.x + nextPlatform.w - paddingX) {
+                        sticks.push({ x: nextPlatform.x + nextPlatform.w, length: 0, rotation: 0 });
+                        phase = "waiting";
+                    }
+                    break;
+                }
+                case "falling": {
+                    if (sticks.last().rotation < 180) {
+                        sticks.last().rotation += deltaTime / turningSpeed;
+                    }
+                    heroY += deltaTime / fallingSpeed;
+                    if (heroY > canvas.height) {
+                        restartButton.style.display = "block";
+                         if (!scorePosted) {
+                            postScore(playerLdap, score);
+                            scorePosted = true;
+                        }
+                        return;
+                    }
+                    break;
+                }
+                default:
+                    throw new Error("Wrong phase");
+            }
+            draw();
+            window.requestAnimationFrame(animate);
+            lastTimestamp = timestamp;
+        }
+
+        function thePlatformTheStickHits() {
+            if (sticks.last().rotation !== 90) return [undefined, false];
+            const stickFarX = sticks.last().x + sticks.last().length;
+            const platformTheStickHits = platforms.find(
+                (platform) => platform.x < stickFarX && stickFarX < platform.x + platform.w
+            );
+            if (
+                platformTheStickHits &&
+                platformTheStickHits.x + platformTheStickHits.w / 2 - perfectAreaSize / 2 < stickFarX &&
+                stickFarX < platformTheStickHits.x + platformTheStickHits.w / 2 + perfectAreaSize / 2
+            ) {
+                return [platformTheStickHits, true];
+            }
+            return [platformTheStickHits, false];
+        }
+
+        // --- Drawing Functions ---
+        function draw() {
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
+            ctx.translate(
+                (canvas.width - canvasWidth) / 2 - sceneOffset,
+                (canvas.height - canvasHeight) / 2
+            );
+            drawPlatforms();
+            drawSticks();
+            drawHero();
+            ctx.restore();
+        }
+
+        function drawPlatforms() {
+            platforms.forEach(({ x, w, color }) => {
+                ctx.fillStyle = color;
+                ctx.fillRect(x, canvasHeight - platformHeight, w, platformHeight + (canvas.height - canvasHeight) / 2);
+                if (sticks.last().x < x) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.fillRect(x + w / 2 - perfectAreaSize / 2, canvasHeight - platformHeight, perfectAreaSize, perfectAreaSize);
+                }
+            });
+        }
+        
+        function drawHero() {
+            ctx.save();
+            ctx.fillStyle = '#3DDC84';
+            const x = heroX - heroWidth / 2;
+            const y = heroY + canvasHeight - platformHeight - heroHeight;
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(x, y, heroWidth, heroHeight, 8);
+            } else {
+                ctx.rect(x,y, heroWidth, heroHeight);
+            }
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(x + heroWidth/2 - 5, y + 12, 2, 0, Math.PI * 2);
+            ctx.arc(x + heroWidth/2 + 5, y + 12, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#3DDC84';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x + 5, y);
+            ctx.lineTo(x, y - 5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x + heroWidth - 5, y);
+            ctx.lineTo(x + heroWidth, y - 5);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawSticks() {
+            sticks.forEach((stick) => {
+                ctx.save();
+                ctx.translate(stick.x, canvasHeight - platformHeight);
+                ctx.rotate((Math.PI / 180) * stick.rotation);
+                ctx.beginPath();
+                ctx.strokeStyle = '#202124';
+                ctx.lineWidth = 4;
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -stick.length);
+                ctx.stroke();
+                ctx.restore();
+            });
+        }
+
+        function drawBackground() {
+            var gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, "#e8f0fe");
+            gradient.addColorStop(1, "#f8f9fa");
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+
+</body>
+</html>
+
